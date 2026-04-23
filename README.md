@@ -4,13 +4,15 @@
 
 ## Architecture
 
-This project follows **Clean Architecture** principles with a full-stack solution:
+This project follows **Clean Architecture** principles with a **Hybrid Presentation Model**:
 
 ### Backend (.NET 8)
-- **Domain Layer**: Core business entities and enums
-- **Application Layer**: Business logic, services, DTOs, dependency injection
-- **Infrastructure Layer**: Data access (Entity Framework Core), migrations
-- **API Layer**: Web API with Swagger documentation and CORS for React frontend
+- **Domain Layer**: Core business entities and enums (no dependencies)
+- **Application Layer**: Business logic, services, DTOs, dependency injection (depends only on Domain)
+- **Infrastructure Layer**: Data access (Entity Framework Core), migrations (depends only on Domain)
+- **API Layer**: Hybrid MVC + Web API
+  - **MVC Controllers**: Server-side rendered dashboards (Doctor, Staff, Patient)
+  - **API Controllers**: REST endpoints for React frontend
 
 ### Frontend (React 19 + Vite)
 - Modern React application with Vite
@@ -18,6 +20,7 @@ This project follows **Clean Architecture** principles with a full-stack solutio
 - i18next for internationalization
 - React Router for navigation
 - Context API for state management
+- Consumes REST API from backend
 
 ## Project Structure
 
@@ -25,14 +28,38 @@ This project follows **Clean Architecture** principles with a full-stack solutio
 Medixa-AI/
 ├── backend/
 │   ├── Medixa-AI.Domain/          # Core entities and enums
-│   ├── Medixa-AI.Application/     # Business logic and services
+│   ├── Medixa-AI.Application/     # Business logic, services, DTOs
+│   │   ├── Interfaces/
+│   │   ├── Services/
+│   │   └── DTOs/
 │   ├── Medixa-AI.Infrastructure/  # Data access and migrations
-│   └── Medixa-AI.Api/             # Web API (Controllers, Swagger)
-├── src/                            # React frontend
+│   │   ├── Persistence/
+│   │   └── Migrations/
+│   └── Medixa-AI.Api/             # Hybrid MVC + API
+│       ├── Controllers/
+│       │   ├── Mvc/              # Dashboard controllers
+│       │   │   ├── DoctorDashboardController
+│       │   │   ├── StaffDashboardController
+│       │   │   └── PatientDashboardController
+│       │   └── Api/              # REST controllers for React
+│       │       ├── PatientController
+│       │       ├── OrderController
+│       │       ├── ResultController
+│       │       └── AIController
+│       ├── Views/
+│       │   ├── Doctor/
+│       │   ├── Staff/
+│       │   ├── Patient/
+│       │   └── Shared/
+│       └── ViewModels/
+├── frontend/                       # React frontend
 │   ├── components/
 │   ├── pages/
 │   ├── context/
 │   └── i18n/
+├── tests/                          # Test projects
+│   ├── Application.Tests/
+│   └── Infrastructure.Tests/
 ├── docs/                           # Documentation
 ├── design/                         # Wireframes and designs
 └── Medixa-AI.sln                   # .NET solution file
@@ -72,12 +99,15 @@ dotnet run
 ```
 
 API will be available at: `https://localhost:5001` (or configured port)
-Swagger UI: `https://localhost:5001/swagger`
+- **MVC Dashboards**: `https://localhost:5001/DoctorDashboard`, `/StaffDashboard`, `/PatientDashboard`
+- **Swagger UI**: `https://localhost:5001/swagger`
+- **API Endpoints**: `https://localhost:5001/api/*`
 
 ### Frontend Setup
 
 1. Install dependencies:
 ```bash
+cd frontend
 npm install
 ```
 
@@ -90,11 +120,28 @@ Frontend will be available at: `http://localhost:5173`
 
 ## Clean Architecture Rules
 
+### Dependency Flow
 - **Domain**: No dependencies on other layers
-- **Application**: Depends only on Domain and Infrastructure
-- **Infrastructure**: Depends only on Domain
-- **API**: Depends only on Application
+- **Application**: Depends ONLY on Domain
+- **Infrastructure**: Depends ONLY on Domain
+- **API**: Depends on Application and Infrastructure (via DI)
 - **Frontend**: Communicates with API via HTTP (no direct database access)
+
+### Layer Responsibilities
+- **Domain**: Entities, enums only
+- **Application**: Interfaces, services, DTOs (no DbContext or EF Core)
+- **Infrastructure**: DbContext, EF Core, migrations
+- **API (MVC)**: Returns Views, uses Application services, server-side rendering
+- **API (REST)**: Returns JSON only, uses Application services, serves React frontend
+
+### Data Flow
+**Dashboards (MVC)**: MVC Controller → Application Service → Infrastructure → DB
+**User App (React)**: React → API Controller → Application Service → Infrastructure → DB
+
+### DTO Enforcement
+- Never return entities directly from API
+- Always return DTOs
+- ViewModels used for MVC dashboards
 
 ## Features
 
@@ -105,6 +152,8 @@ Frontend will be available at: `http://localhost:5173`
 - 🧠 Smart medical recommendations
 - 🗂 Patient history insights
 - 🗣 Simplified reports for non-medical users
+- 📊 Server-side rendered dashboards (Doctor, Staff, Patient)
+- 🌐 REST API for React frontend
 
 ## Documentation
 

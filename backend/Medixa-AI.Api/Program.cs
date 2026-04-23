@@ -1,8 +1,13 @@
 using Medixa_AI.Application;
+using Medixa_AI.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 Add Controllers
+// 🔹 Add MVC (for dashboards)
+builder.Services.AddControllersWithViews();
+
+// 🔹 Add API Controllers (for React)
 builder.Services.AddControllers();
 
 // 🔹 Add Swagger/OpenAPI
@@ -12,8 +17,12 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Medixa AI API", Version = "v1" });
 });
 
+// 🔹 Register DbContext (Infrastructure)
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // 🔹 Register Application Services
-builder.Services.AddApplicationServices(builder.Configuration.GetConnectionString("DefaultConnection")!);
+builder.Services.AddApplicationServices();
 
 // 🔹 Add CORS for React frontend
 builder.Services.AddCors(options =>
@@ -38,10 +47,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
+app.UseRouting();
+
 app.UseCors("AllowReactApp");
 
 app.UseAuthorization();
 
+// 🔹 Map MVC routes (dashboards)
+app.MapControllerRoute(
+    name: "mvc",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// 🔹 Map API routes (for React)
 app.MapControllers();
 
 app.Run();
