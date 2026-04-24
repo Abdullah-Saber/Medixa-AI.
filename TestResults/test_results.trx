@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2bcd3d24-78f1-4122-bd26-43c4c19cc8d3" name="hady@DESKTOP-NNAGF0N 2026-04-24 14:43:24" runUser="DESKTOP-NNAGF0N\hady" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-04-24T14:43:24.7690709+03:00" queuing="2026-04-24T14:43:24.7690713+03:00" start="2026-04-24T14:43:23.9102022+03:00" finish="2026-04-24T14:43:24.7742912+03:00" />
+  <TestSettings name="default" id="ee05b0f9-f296-41ed-807c-f34e7be86f33">
+    <Deployment runDeploymentRoot="hady_DESKTOP-NNAGF0N_2026-04-24_14_43_24" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d2155e01-aece-43b9-847d-be5aba075b54" testId="e625763f-f90b-21b8-3b9d-8d991f06a541" testName="Controllers.Tests.UnitTest1.Test3_Passes" computerName="DESKTOP-NNAGF0N" duration="00:00:00.0001353" startTime="2026-04-24T14:43:24.6353702+03:00" endTime="2026-04-24T14:43:24.6354090+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2155e01-aece-43b9-847d-be5aba075b54" />
+    <UnitTestResult executionId="3fd6f0cf-d8c2-48b1-afb9-7918e7bc2c0b" testId="5b38ee30-a35a-0d03-ca7c-82125b21cb12" testName="Controllers.Tests.UnitTest1.Test5_AssertNotNull" computerName="DESKTOP-NNAGF0N" duration="00:00:00.0001092" startTime="2026-04-24T14:43:24.6355191+03:00" endTime="2026-04-24T14:43:24.6355545+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fd6f0cf-d8c2-48b1-afb9-7918e7bc2c0b" />
+    <UnitTestResult executionId="75a05727-df0e-46a5-b0f9-cfed72895935" testId="e53f1568-4963-411b-b811-5bf0d1a76cbb" testName="Controllers.Tests.UnitTest1.Test2_Passes" computerName="DESKTOP-NNAGF0N" duration="00:00:00.0068338" startTime="2026-04-24T14:43:24.6088560+03:00" endTime="2026-04-24T14:43:24.6230352+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75a05727-df0e-46a5-b0f9-cfed72895935" />
+    <UnitTestResult executionId="47294ee0-8cbf-49d3-86f8-9ae92288e0eb" testId="2ac47eaf-f4dc-da2b-870d-381bb6abd11c" testName="Controllers.Tests.UnitTest1.Test1_Passes" computerName="DESKTOP-NNAGF0N" duration="00:00:00.0001153" startTime="2026-04-24T14:43:24.6344754+03:00" endTime="2026-04-24T14:43:24.6345782+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47294ee0-8cbf-49d3-86f8-9ae92288e0eb" />
+    <UnitTestResult executionId="9b6442c2-496a-4cee-b692-41cac46db3a6" testId="16539a8d-1a73-4baa-5ce8-c91f15eeced7" testName="Controllers.Tests.UnitTest1.Test4_AssertTrue" computerName="DESKTOP-NNAGF0N" duration="00:00:00.0001686" startTime="2026-04-24T14:43:24.6351864+03:00" endTime="2026-04-24T14:43:24.6352467+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b6442c2-496a-4cee-b692-41cac46db3a6" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Controllers.Tests.UnitTest1.Test4_AssertTrue" storage="c:\users\hady\downloads\controllers\controllers.tests\bin\debug\net10.0\controllers.tests.dll" id="16539a8d-1a73-4baa-5ce8-c91f15eeced7">
+      <Execution id="9b6442c2-496a-4cee-b692-41cac46db3a6" />
+      <TestMethod codeBase="C:\Users\hady\Downloads\Controllers\Controllers.Tests\bin\Debug\net10.0\Controllers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Controllers.Tests.UnitTest1" name="Test4_AssertTrue" />
+    </UnitTest>
+    <UnitTest name="Controllers.Tests.UnitTest1.Test3_Passes" storage="c:\users\hady\downloads\controllers\controllers.tests\bin\debug\net10.0\controllers.tests.dll" id="e625763f-f90b-21b8-3b9d-8d991f06a541">
+      <Execution id="d2155e01-aece-43b9-847d-be5aba075b54" />
+      <TestMethod codeBase="C:\Users\hady\Downloads\Controllers\Controllers.Tests\bin\Debug\net10.0\Controllers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Controllers.Tests.UnitTest1" name="Test3_Passes" />
+    </UnitTest>
+    <UnitTest name="Controllers.Tests.UnitTest1.Test1_Passes" storage="c:\users\hady\downloads\controllers\controllers.tests\bin\debug\net10.0\controllers.tests.dll" id="2ac47eaf-f4dc-da2b-870d-381bb6abd11c">
+      <Execution id="47294ee0-8cbf-49d3-86f8-9ae92288e0eb" />
+      <TestMethod codeBase="C:\Users\hady\Downloads\Controllers\Controllers.Tests\bin\Debug\net10.0\Controllers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Controllers.Tests.UnitTest1" name="Test1_Passes" />
+    </UnitTest>
+    <UnitTest name="Controllers.Tests.UnitTest1.Test5_AssertNotNull" storage="c:\users\hady\downloads\controllers\controllers.tests\bin\debug\net10.0\controllers.tests.dll" id="5b38ee30-a35a-0d03-ca7c-82125b21cb12">
+      <Execution id="3fd6f0cf-d8c2-48b1-afb9-7918e7bc2c0b" />
+      <TestMethod codeBase="C:\Users\hady\Downloads\Controllers\Controllers.Tests\bin\Debug\net10.0\Controllers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Controllers.Tests.UnitTest1" name="Test5_AssertNotNull" />
+    </UnitTest>
+    <UnitTest name="Controllers.Tests.UnitTest1.Test2_Passes" storage="c:\users\hady\downloads\controllers\controllers.tests\bin\debug\net10.0\controllers.tests.dll" id="e53f1568-4963-411b-b811-5bf0d1a76cbb">
+      <Execution id="75a05727-df0e-46a5-b0f9-cfed72895935" />
+      <TestMethod codeBase="C:\Users\hady\Downloads\Controllers\Controllers.Tests\bin\Debug\net10.0\Controllers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Controllers.Tests.UnitTest1" name="Test2_Passes" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e625763f-f90b-21b8-3b9d-8d991f06a541" executionId="d2155e01-aece-43b9-847d-be5aba075b54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b38ee30-a35a-0d03-ca7c-82125b21cb12" executionId="3fd6f0cf-d8c2-48b1-afb9-7918e7bc2c0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e53f1568-4963-411b-b811-5bf0d1a76cbb" executionId="75a05727-df0e-46a5-b0f9-cfed72895935" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ac47eaf-f4dc-da2b-870d-381bb6abd11c" executionId="47294ee0-8cbf-49d3-86f8-9ae92288e0eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16539a8d-1a73-4baa-5ce8-c91f15eeced7" executionId="9b6442c2-496a-4cee-b692-41cac46db3a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: Controllers.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  Controllers.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    Controllers.Tests&#xD;
+[xUnit.net 00:00:00.21]   Finished:    Controllers.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

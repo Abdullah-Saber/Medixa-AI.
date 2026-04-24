@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Controllers.Tests/Controllers.Tests.csproj" />
+  <Project Path="Controllers/Controllers.csproj" />
+  <Project Path="Medixa_AI.Infrastructure/Medixa_AI.Infrastructure.csproj" />
+</Solution>

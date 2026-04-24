@@ -1,0 +1,8 @@
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.csproj.AssemblyReference.cache
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.AssemblyInfoInputs.cache
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.AssemblyInfo.cs
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.csproj.CoreCompileInputs.cache
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\hady\Downloads\Controllers\Controllers\obj\Debug\net10.0\Controllers.MvcApplicationPartsAssemblyInfo.cache
