@@ -40,7 +40,7 @@ function App() {
                             <p><strong>height:</strong> 165 cm</p>
                             <p><strong>weight:</strong> 60 kg</p>
                             <p><strong>blood type:</strong> A+</p>
-                            <p><strong>medical status:</strong> stable ✅</p>
+                            <p><strong>medical status:</strong> stable </p>
                         </div>
                     </div>
 
