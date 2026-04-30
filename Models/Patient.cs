@@ -33,6 +33,7 @@ namespace patient_lifeCycle.Models
         public string? Address { get; set; }
 
         [StringLength(5)]
+        [RegularExpression(@"^(A|B|AB|O)[+-]$")]
         public string? BloodType { get; set; }
 
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
