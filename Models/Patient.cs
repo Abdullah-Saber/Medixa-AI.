@@ -16,10 +16,12 @@ namespace patient_lifeCycle.Models
         [StringLength(14, MinimumLength = 14)]
         public string NationalID { get; set; } = null!;
 
+        [Required]
         [Phone]
         [StringLength(20)]
         public string? Phone { get; set; }
-
+        
+        [Required]
         [EmailAddress]
         [StringLength(100)]
         public string? Email { get; set; }
