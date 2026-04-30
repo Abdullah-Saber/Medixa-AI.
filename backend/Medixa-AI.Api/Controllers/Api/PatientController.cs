@@ -1,5 +1,6 @@
 using Medixa_AI.Application.DTOs;
 using Medixa_AI.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medixa_AI.Api.Controllers.Api
@@ -32,6 +33,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<ActionResult<PatientDto>> Create(PatientDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName))
@@ -45,6 +47,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<IActionResult> Update(Guid id, PatientDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName))
@@ -60,6 +63,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _patientService.DeleteAsync(id);

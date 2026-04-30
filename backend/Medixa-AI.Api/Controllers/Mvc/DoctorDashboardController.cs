@@ -1,6 +1,8 @@
 using Medixa_AI.Application.DTOs;
 using Medixa_AI.Application.Interfaces;
+using Medixa_AI.Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using OrderStatus = Medixa_AI.Domain.Enums.OrderStatus;
 
 namespace Medixa_AI.Api.Controllers.Mvc
 {
@@ -9,15 +11,18 @@ namespace Medixa_AI.Api.Controllers.Mvc
         private readonly IDoctorService _doctorService;
         private readonly IOrderService _orderService;
         private readonly IResultService _resultService;
+        private readonly IPatientService _patientService;
 
         public DoctorDashboardController(
             IDoctorService doctorService,
             IOrderService orderService,
-            IResultService resultService)
+            IResultService resultService,
+            IPatientService patientService)
         {
             _doctorService = doctorService;
             _orderService = orderService;
             _resultService = resultService;
+            _patientService = patientService;
         }
 
         // GET: /DoctorDashboard
@@ -26,13 +31,39 @@ namespace Medixa_AI.Api.Controllers.Mvc
             var allDoctors = await _doctorService.GetAllAsync();
             var allOrders = await _orderService.GetAllAsync();
             var allResults = await _resultService.GetAllAsync();
+            var allPatients = await _patientService.GetAllAsync();
 
             var viewModel = new DoctorDashboardViewModel
             {
-                AllDoctors = allDoctors,
-                TotalOrders = allOrders.Count(),
-                TotalResults = allResults.Count(),
-                ActiveDoctors = allDoctors.Count(d => d.IsActive)
+                TotalPatients = allPatients.Count(),
+                PendingAppointments = 0, // TODO: Implement when AppointmentService is ready
+                TodayResults = allResults.Count(r => r.ResultDate.Date == DateTime.Today),
+                ActiveOrders = 0, // TODO: Add InProgress status to OrderStatus enum
+                RecentPatients = allPatients
+                    .Take(5)
+                    .Select(p => new RecentPatient
+                    {
+                        PatientID = p.PatientID,
+                        FullName = p.FullName,
+                        LastVisit = p.RegistrationDate
+                    }).ToList(),
+                UpcomingAppointments = new List<UpcomingAppointment>
+                {
+                    new UpcomingAppointment
+                    {
+                        AppointmentID = 1,
+                        PatientName = "John Doe",
+                        AppointmentDate = DateTime.Now.AddHours(2),
+                        Reason = "Routine Checkup"
+                    },
+                    new UpcomingAppointment
+                    {
+                        AppointmentID = 2,
+                        PatientName = "Jane Smith",
+                        AppointmentDate = DateTime.Now.AddHours(4),
+                        Reason = "Follow-up"
+                    }
+                }
             };
 
             return View(viewModel);
@@ -58,13 +89,5 @@ namespace Medixa_AI.Api.Controllers.Mvc
             var results = await _resultService.GetAllAsync();
             return View(results);
         }
-    }
-
-    public class DoctorDashboardViewModel
-    {
-        public IEnumerable<DoctorDto> AllDoctors { get; set; } = new List<DoctorDto>();
-        public int TotalOrders { get; set; }
-        public int TotalResults { get; set; }
-        public int ActiveDoctors { get; set; }
     }
 }

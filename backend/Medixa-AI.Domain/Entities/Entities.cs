@@ -29,6 +29,7 @@ namespace Medixa_AI.Domain.Entities
         public string? Email { get; set; }
         public int SpecializationID { get; set; }
         public string? ClinicName { get; set; }
+        public string? PasswordHash { get; set; }
         public bool IsActive { get; set; } = true;
 
         // Navigation
@@ -46,6 +47,7 @@ namespace Medixa_AI.Domain.Entities
         public string NationalID { get; set; } = null!;
         public string? Phone { get; set; }
         public string? Email { get; set; }
+        public string? PasswordHash { get; set; }
         public Gender? Gender { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? Address { get; set; }
@@ -72,6 +74,7 @@ namespace Medixa_AI.Domain.Entities
         public EmployeeRole Role { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
+        public string? PasswordHash { get; set; }
         public decimal Salary { get; set; }
         public DateTime HireDate { get; set; }
         public bool IsActive { get; set; } = true;

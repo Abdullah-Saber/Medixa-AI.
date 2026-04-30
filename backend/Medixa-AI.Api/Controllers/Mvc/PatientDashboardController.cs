@@ -1,5 +1,6 @@
 using Medixa_AI.Application.DTOs;
 using Medixa_AI.Application.Interfaces;
+using Medixa_AI.Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medixa_AI.Api.Controllers.Mvc
@@ -29,10 +30,30 @@ namespace Medixa_AI.Api.Controllers.Mvc
 
             var viewModel = new PatientDashboardViewModel
             {
-                AllPatients = allPatients,
+                PatientID = Guid.Empty, // TODO: Get from authenticated user
+                FullName = "Guest User", // TODO: Get from authenticated user
                 TotalOrders = allOrders.Count(),
-                TotalResults = allResults.Count(),
-                ActivePatients = allPatients.Count(p => p.IsActive)
+                PendingResults = allResults.Count(r => r.ResultText == null || r.ResultText == ""),
+                CompletedResults = allResults.Count(r => r.ResultText != null && r.ResultText != ""),
+                RecentOrders = allOrders
+                    .Take(5)
+                    .Select(o => new RecentOrder
+                    {
+                        OrderID = o.OrderID.GetHashCode(), // Use hash code for display
+                        OrderDate = o.OrderDate,
+                        Status = o.Status.ToString(),
+                        TestCount = o.OrderDetails?.Count ?? 0
+                    }).ToList(),
+                HealthAlerts = new List<HealthAlert>
+                {
+                    new HealthAlert
+                    {
+                        Type = "Recommendation",
+                        Message = "Annual checkup recommended",
+                        Date = DateTime.Now.AddDays(-30),
+                        Severity = "Low"
+                    }
+                }
             };
 
             return View(viewModel);
@@ -65,13 +86,5 @@ namespace Medixa_AI.Api.Controllers.Mvc
             var orders = await _orderService.GetByPatientAsync(patientId);
             return View(orders);
         }
-    }
-
-    public class PatientDashboardViewModel
-    {
-        public IEnumerable<PatientDto> AllPatients { get; set; } = new List<PatientDto>();
-        public int TotalOrders { get; set; }
-        public int TotalResults { get; set; }
-        public int ActivePatients { get; set; }
     }
 }

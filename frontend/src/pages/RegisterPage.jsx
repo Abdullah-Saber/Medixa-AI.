@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 
 const Register = () => {
-    // 1. تحديد الـ Role (بشكل افتراضي Patient)
-    const [role, setRole] = useState('Patient');
+    // 1. تحديد الـ Category (بشكل افتراضي Patient)
+    const [category, setCategory] = useState('Patient');
+    const [employeeRole, setEmployeeRole] = useState('Receptionist');
 
     // 2. تجميع كل البيانات في Object واحد
     const [formData, setFormData] = useState({
-        name: '',
+        fullName: '',
         email: '',
         password: '',
         phone: '',
-        patientProvince: '',
-        doctorProvince: '',
-        // حقول الطبيب (بتبدأ فاضية)
-        specialization: '',
-        clinicAddress: '',
-        licenseNumber: ''
+        // Patient fields
+        nationalID: '',
+        gender: 0,
+        dateOfBirth: '',
+        address: '',
+        bloodType: '',
+        // Doctor fields
+        specializationID: 1,
+        clinicName: ''
     });
 
     // 3. دالة تحديث البيانات عند الكتابة
@@ -31,15 +35,51 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // تجهيز الداتا المراد إرسالها مع إضافة الـ Role الحالي
-        const payload = {
-            ...formData,
-            role: role,
-            province: role === 'Doctor' ? formData.doctorProvince : formData.patientProvince
-        };
+        let endpoint = '';
+        let payload = {};
+
+        if (category === 'Patient') {
+            endpoint = 'http://localhost:5000/api/patientauth/register';
+            payload = {
+                fullName: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                nationalID: formData.nationalID,
+                phone: formData.phone || null,
+                gender: formData.gender,
+                dateOfBirth: formData.dateOfBirth || null,
+                address: formData.address || null,
+                bloodType: formData.bloodType || null
+            };
+        } else if (category === 'Doctor') {
+            endpoint = 'http://localhost:5000/api/doctorauth/register';
+            payload = {
+                fullName: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                specializationID: formData.specializationID,
+                phone: formData.phone || null,
+                clinicName: formData.clinicName || null
+            };
+        } else {
+            // Employee
+            endpoint = 'http://localhost:5000/api/auth/register';
+            const roleMap = {
+                'Admin': 1,
+                'Technician': 2,
+                'Receptionist': 3
+            };
+            payload = {
+                fullName: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                phone: formData.phone,
+                role: roleMap[employeeRole]
+            };
+        }
 
         try {
-            const response = await fetch('https://localhost:7000/api/Account/register', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,8 +88,7 @@ const Register = () => {
             });
 
             if (response.ok) {
-                alert(`Successfully registered as a ${role}!`);
-                // هنا ممكن تعملي Redirect لصفحة الـ Login
+                alert(`Successfully registered as a ${category === 'Employee' ? employeeRole : category}!`);
             } else {
                 const errorData = await response.json();
                 console.error("Errors:", errorData);
@@ -66,21 +105,28 @@ const Register = () => {
             <div style={styles.card}>
                 <h2 style={styles.header}>Create New Account</h2>
                 
-                {/* الجزء الخاص باختيار النوع (Doctor / Patient) */}
+                {/* الجزء الخاص باختيار النوع (Patient / Doctor / Employee) */}
                 <div style={styles.toggleWrapper}>
-                    <button 
+                    <button
                         type="button"
-                        onClick={() => setRole('Patient')}
-                        style={role === 'Patient' ? styles.activeToggle : styles.toggleBtn}
+                        onClick={() => setCategory('Patient')}
+                        style={category === 'Patient' ? styles.activeToggle : styles.toggleBtn}
                     >
                         Patient
                     </button>
-                    <button 
+                    <button
                         type="button"
-                        onClick={() => setRole('Doctor')}
-                        style={role === 'Doctor' ? styles.activeToggle : styles.toggleBtn}
+                        onClick={() => setCategory('Doctor')}
+                        style={category === 'Doctor' ? styles.activeToggle : styles.toggleBtn}
                     >
                         Doctor
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setCategory('Employee')}
+                        style={category === 'Employee' ? styles.activeToggle : styles.toggleBtn}
+                    >
+                        Employee
                     </button>
                 </div>
 
@@ -88,114 +134,175 @@ const Register = () => {
                     {/* الحقول الأساسية لكل المستخدمين */}
                     <div style={styles.fieldGroup}>
                         <label style={styles.label}>Full Name</label>
-                        <input 
-                            name="name" 
-                            type="text" 
-                            placeholder="Enter your name" 
-                            style={styles.input} 
-                            onChange={handleInputChange} 
-                            required 
+                        <input
+                            name="fullName"
+                            type="text"
+                            placeholder="Enter your name"
+                            style={styles.input}
+                            onChange={handleInputChange}
+                            required
                         />
                     </div>
 
                     <div style={styles.fieldGroup}>
                         <label style={styles.label}>Email Address</label>
-                        <input 
-                            name="email" 
-                            type="email" 
-                            placeholder="example@mail.com" 
-                            style={styles.input} 
-                            onChange={handleInputChange} 
-                            required 
+                        <input
+                            name="email"
+                            type="email"
+                            placeholder="example@mail.com"
+                            style={styles.input}
+                            onChange={handleInputChange}
+                            required
                         />
                     </div>
 
                     <div style={styles.fieldGroup}>
                         <label style={styles.label}>Password</label>
-                        <input 
-                            name="password" 
-                            type="password" 
-                            placeholder="********" 
-                            style={styles.input} 
-                            onChange={handleInputChange} 
-                            required 
-                        />
-                    </div>
-
-                    <div style={styles.fieldGroup}>
-                        <label style={styles.label}>Phone Number</label>
-                        <input 
-                            name="phone" 
-                            type="text" 
-                            placeholder="01xxxxxxxxx" 
-                            style={styles.input} 
-                            onChange={handleInputChange} 
-                            required 
-                        />
-                    </div>
-
-                    <div style={styles.fieldGroup}>
-                        <label style={styles.label}>Province</label>
-                        <select
-                            name={role === 'Doctor' ? 'doctorProvince' : 'patientProvince'}
-                            value={role === 'Doctor' ? formData.doctorProvince : formData.patientProvince}
-                            onChange={handleInputChange}
+                        <input
+                            name="password"
+                            type="password"
+                            placeholder="********"
                             style={styles.input}
+                            onChange={handleInputChange}
                             required
-                        >
-                            <option value="">Select your province</option>
-                            <option value="Cairo">Cairo</option>
-                            <option value="Giza">Giza</option>
-                            <option value="Alexandria">Alexandria</option>
-                            <option value="Luxor">Luxor</option>
-                            <option value="Aswan">Aswan</option>
-                            <option value="Suez">Suez</option>
-                            <option value="Fayoum">Fayoum</option>
-                            <option value="Sharqia">Sharqia</option>
-                            <option value="Gharbia">Gharbia</option>
-                            <option value="Dakahlia">Dakahlia</option>
-                        </select>
+                        />
                     </div>
 
-                    {/* عرض حقول إضافية فقط إذا كان المختار "Doctor" */}
-                    {role === 'Doctor' && (
-                        <div style={styles.doctorSection}>
-                            <h4 style={styles.subHeader}>Professional Information</h4>
-                            
-                            <div style={styles.fieldGroup}>
-                                <input 
-                                    name="specialization" 
-                                    placeholder="Specialization (e.g. Surgeon)" 
-                                    style={styles.input} 
-                                    onChange={handleInputChange} 
-                                    required 
-                                />
-                            </div>
+                    <div style={styles.fieldGroup}>
+                        <label style={styles.label}>Phone Number (Optional)</label>
+                        <input
+                            name="phone"
+                            type="text"
+                            placeholder="01xxxxxxxxx"
+                            style={styles.input}
+                            onChange={handleInputChange}
+                        />
+                    </div>
 
+                    {/* Patient-specific fields */}
+                    {category === 'Patient' && (
+                        <>
                             <div style={styles.fieldGroup}>
-                                <input 
-                                    name="clinicAddress" 
-                                    placeholder="Clinic Address" 
-                                    style={styles.input} 
-                                    onChange={handleInputChange} 
-                                    required 
+                                <label style={styles.label}>National ID *</label>
+                                <input
+                                    name="nationalID"
+                                    type="text"
+                                    placeholder="National ID"
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                    required
                                 />
                             </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Phone (Optional)</label>
+                                <input
+                                    name="phone"
+                                    type="text"
+                                    placeholder="Phone Number"
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Gender (Optional)</label>
+                                <select
+                                    name="gender"
+                                    value={formData.gender}
+                                    onChange={handleInputChange}
+                                    style={styles.input}
+                                >
+                                    <option value="0">Male</option>
+                                    <option value="1">Female</option>
+                                </select>
+                            </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Date of Birth (Optional)</label>
+                                <input
+                                    name="dateOfBirth"
+                                    type="date"
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Address (Optional)</label>
+                                <input
+                                    name="address"
+                                    type="text"
+                                    placeholder="Address"
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Blood Type (Optional)</label>
+                                <input
+                                    name="bloodType"
+                                    type="text"
+                                    placeholder="A+, B+, O-, etc."
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </>
+                    )}
 
+                    {/* Doctor-specific fields */}
+                    {category === 'Doctor' && (
+                        <>
                             <div style={styles.fieldGroup}>
-                                <input 
-                                    name="licenseNumber" 
-                                    placeholder="Medical License Number" 
-                                    style={styles.input} 
-                                    onChange={handleInputChange} 
-                                    required 
+                                <label style={styles.label}>Specialization ID *</label>
+                                <input
+                                    name="specializationID"
+                                    type="number"
+                                    value={formData.specializationID}
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                    required
                                 />
                             </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Phone (Optional)</label>
+                                <input
+                                    name="phone"
+                                    type="text"
+                                    placeholder="Phone Number"
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div style={styles.fieldGroup}>
+                                <label style={styles.label}>Clinic Name (Optional)</label>
+                                <input
+                                    name="clinicName"
+                                    type="text"
+                                    placeholder="Clinic Name"
+                                    style={styles.input}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {/* Employee-specific fields */}
+                    {category === 'Employee' && (
+                        <div style={styles.fieldGroup}>
+                            <label style={styles.label}>Employee Role</label>
+                            <select
+                                value={employeeRole}
+                                onChange={(e) => setEmployeeRole(e.target.value)}
+                                style={styles.input}
+                                required
+                            >
+                                <option value="Admin">Admin</option>
+                                <option value="Technician">Technician</option>
+                                <option value="Receptionist">Receptionist</option>
+                            </select>
                         </div>
                     )}
 
                     <button type="submit" style={styles.submitButton}>
-                        Register as {role}
+                        Register as {category === 'Employee' ? employeeRole : category}
                     </button>
                 </form>
 

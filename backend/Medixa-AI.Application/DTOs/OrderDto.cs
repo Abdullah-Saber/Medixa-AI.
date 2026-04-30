@@ -1,3 +1,4 @@
+using Medixa_AI.Domain.Entities;
 using Medixa_AI.Domain.Enums;
 
 namespace Medixa_AI.Application.DTOs
@@ -13,5 +14,6 @@ namespace Medixa_AI.Application.DTOs
         public string? Notes { get; set; }
         public Guid CreatedByEmployeeID { get; set; }
         public DateTime CreatedAt { get; set; }
+        public List<OrderDetail>? OrderDetails { get; set; }
     }
 }

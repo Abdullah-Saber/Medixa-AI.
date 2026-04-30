@@ -14,6 +14,11 @@ namespace Medixa_AI.Application
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IResultService, ResultService>();
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
+            services.AddScoped<ILabTestService, LabTestService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IPatientAuthService, PatientAuthService>();
+            services.AddScoped<IDoctorAuthService, DoctorAuthService>();
 
             return services;
         }

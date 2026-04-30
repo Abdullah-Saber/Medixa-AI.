@@ -1,7 +1,9 @@
 using Medixa_AI.Application.DTOs;
 using Medixa_AI.Application.Interfaces;
 using Medixa_AI.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Medixa_AI.Api.Controllers.Api
 {
@@ -47,18 +49,16 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "Technician")]
         public async Task<ActionResult<ResultDto>> Create(ResultDto dto)
         {
-            // Temporarily allow empty OrderDetailID for testing without OrderDetail setup
-            // if (dto.OrderDetailID == Guid.Empty)
-            //     return BadRequest("OrderDetailID is required.");
+            if (dto.OrderDetailID == Guid.Empty)
+                return BadRequest("OrderDetailID is required.");
 
             if (dto.TechnicianID == Guid.Empty)
                 return BadRequest("TechnicianID is required.");
 
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var created = await _resultService.CreateAsync(dto, requesterRole);
             if (created == null)
                 return Unauthorized("Only Technician can create results.");
@@ -67,6 +67,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Technician")]
         public async Task<IActionResult> Update(Guid id, ResultDto dto)
         {
             if (dto.OrderDetailID == Guid.Empty)
@@ -75,9 +76,7 @@ namespace Medixa_AI.Api.Controllers.Api
             if (dto.TechnicianID == Guid.Empty)
                 return BadRequest("TechnicianID is required.");
 
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var result = await _resultService.UpdateAsync(id, dto, requesterRole);
             if (!result)
                 return Unauthorized("Only Technician can update results.");
@@ -86,6 +85,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Technician")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _resultService.DeleteAsync(id);
@@ -94,15 +94,12 @@ namespace Medixa_AI.Api.Controllers.Api
             return NoContent();
         }
 
-        private bool TryGetRequesterRole(out EmployeeRole role)
+        private EmployeeRole GetRequesterRole()
         {
-            if (!Request.Headers.ContainsKey("role"))
-            {
-                role = default;
-                return false;
-            }
-
-            return Enum.TryParse(Request.Headers["role"], true, out role);
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.IsNullOrEmpty(roleClaim) || !Enum.TryParse<EmployeeRole>(roleClaim, out var role))
+                return EmployeeRole.Receptionist; // Default fallback
+            return role;
         }
     }
 }

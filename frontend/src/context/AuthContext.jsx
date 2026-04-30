@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -23,54 +24,61 @@ export function AuthProvider({ children }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email, password) => {
-    // Mock API call - replace with actual API
-    const mockUsers = [
-      { id: 1, email: 'admin@smartlab.com', password: 'admin123', role: 'Admin', name: 'Admin User' },
-      { id: 2, email: 'doctor@smartlab.com', password: 'doctor123', role: 'Doctor', name: 'Dr. Ahmed' },
-      { id: 3, email: 'patient@smartlab.com', password: 'patient123', role: 'Patient', name: 'John Doe' },
-    ];
+  const login = async (email, password, role = null) => {
+    try {
+      const response = await authService.login({ email, password, role });
+      
+      const userData = {
+        id: response.user.id,
+        email: response.user.email,
+        role: response.user.role,
+        name: response.user.name,
+        token: response.token,
+      };
 
-    const foundUser = mockUsers.find(
-      (u) => u.email === email && u.password === password
-    );
+      // Store in localStorage
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify({
+        id: response.user.id,
+        email: response.user.email,
+        role: response.user.role,
+        name: response.user.name,
+      }));
 
-    if (!foundUser) {
-      throw new Error('Invalid email or password');
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
     }
-
-    // Generate mock JWT token
-    const token = `mock_jwt_${foundUser.id}_${Date.now()}`;
-    
-    const userData = {
-      id: foundUser.id,
-      email: foundUser.email,
-      role: foundUser.role,
-      name: foundUser.name,
-      token: token,
-    };
-
-    // Store in localStorage
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify({
-      id: foundUser.id,
-      email: foundUser.email,
-      role: foundUser.role,
-      name: foundUser.name,
-    }));
-
-    setUser(userData);
-    return userData;
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const response = await authService.register(userData);
+      return response;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    }
   };
 
   const isAuthenticated = !!user?.token;
   const isAdmin = user?.role === 'Admin';
+  const isDoctor = user?.role === 'Doctor';
+  const isPatient = user?.role === 'Patient';
 
   const getDashboardRoute = () => {
     if (!user) return '/login';
@@ -78,8 +86,9 @@ export function AuthProvider({ children }) {
       case 'Admin':
         return '/admin';
       case 'Doctor':
-        return '/doctors';
+        return '/doctor';
       case 'Patient':
+        return '/patient';
       default:
         return '/';
     }
@@ -89,8 +98,11 @@ export function AuthProvider({ children }) {
     user,
     login,
     logout,
+    register,
     isAuthenticated,
     isAdmin,
+    isDoctor,
+    isPatient,
     isLoading,
     getDashboardRoute,
   };

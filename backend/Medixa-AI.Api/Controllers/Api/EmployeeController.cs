@@ -1,7 +1,9 @@
 using Medixa_AI.Application.DTOs;
 using Medixa_AI.Application.Interfaces;
 using Medixa_AI.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Medixa_AI.Api.Controllers.Api
 {
@@ -47,14 +49,13 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<EmployeeDto>> Create(EmployeeDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName))
                 return BadRequest("FullName is required.");
 
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var created = await _employeeService.CreateAsync(dto, requesterRole);
             if (created == null)
                 return Unauthorized("Only Admin can create staff.");
@@ -63,14 +64,13 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, EmployeeDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName))
                 return BadRequest("FullName is required.");
 
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var result = await _employeeService.UpdateAsync(id, dto, requesterRole);
             if (!result)
                 return Unauthorized("Only Admin can update staff.");
@@ -79,11 +79,10 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPut("{id}/deactivate")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Deactivate(Guid id)
         {
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var result = await _employeeService.DeactivateAsync(id, requesterRole);
             if (!result)
                 return Unauthorized("Only Admin can deactivate staff.");
@@ -92,11 +91,10 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPut("{id}/activate")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Activate(Guid id)
         {
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var result = await _employeeService.ActivateAsync(id, requesterRole);
             if (!result)
                 return Unauthorized("Only Admin can activate staff.");
@@ -105,6 +103,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _employeeService.DeleteAsync(id);
@@ -113,15 +112,12 @@ namespace Medixa_AI.Api.Controllers.Api
             return NoContent();
         }
 
-        private bool TryGetRequesterRole(out EmployeeRole role)
+        private EmployeeRole GetRequesterRole()
         {
-            if (!Request.Headers.ContainsKey("role"))
-            {
-                role = default;
-                return false;
-            }
-
-            return Enum.TryParse(Request.Headers["role"], true, out role);
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.IsNullOrEmpty(roleClaim) || !Enum.TryParse<EmployeeRole>(roleClaim, out var role))
+                return EmployeeRole.Receptionist; // Default fallback
+            return role;
         }
     }
 }

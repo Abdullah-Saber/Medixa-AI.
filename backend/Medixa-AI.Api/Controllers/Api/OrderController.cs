@@ -1,7 +1,9 @@
 using Medixa_AI.Application.DTOs;
 using Medixa_AI.Application.Interfaces;
 using Medixa_AI.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Medixa_AI.Api.Controllers.Api
 {
@@ -47,6 +49,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<ActionResult<OrderDto>> Create(OrderDto dto)
         {
             if (dto.PatientID == Guid.Empty)
@@ -55,9 +58,7 @@ namespace Medixa_AI.Api.Controllers.Api
             if (dto.CreatedByEmployeeID == Guid.Empty)
                 return BadRequest("CreatedByEmployeeID is required.");
 
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var created = await _orderService.CreateAsync(dto, requesterRole);
             if (created == null)
                 return Unauthorized("Only Admin and Receptionist can create orders.");
@@ -66,6 +67,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<IActionResult> Update(Guid id, OrderDto dto)
         {
             if (dto.PatientID == Guid.Empty)
@@ -74,9 +76,7 @@ namespace Medixa_AI.Api.Controllers.Api
             if (dto.CreatedByEmployeeID == Guid.Empty)
                 return BadRequest("CreatedByEmployeeID is required.");
 
-            if (!TryGetRequesterRole(out var requesterRole))
-                return Unauthorized("Invalid or missing role header.");
-
+            var requesterRole = GetRequesterRole();
             var result = await _orderService.UpdateAsync(id, dto, requesterRole);
             if (!result)
                 return Unauthorized("Only Admin and Receptionist can update orders.");
@@ -85,6 +85,7 @@ namespace Medixa_AI.Api.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _orderService.DeleteAsync(id);
@@ -93,15 +94,12 @@ namespace Medixa_AI.Api.Controllers.Api
             return NoContent();
         }
 
-        private bool TryGetRequesterRole(out EmployeeRole role)
+        private EmployeeRole GetRequesterRole()
         {
-            if (!Request.Headers.ContainsKey("role"))
-            {
-                role = default;
-                return false;
-            }
-
-            return Enum.TryParse(Request.Headers["role"], true, out role);
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.IsNullOrEmpty(roleClaim) || !Enum.TryParse<EmployeeRole>(roleClaim, out var role))
+                return EmployeeRole.Receptionist; // Default fallback
+            return role;
         }
     }
 }

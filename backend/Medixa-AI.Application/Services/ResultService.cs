@@ -34,8 +34,9 @@ namespace Medixa_AI.Application.Services
             if (dto.TechnicianID == Guid.Empty)
                 return null;
 
-            // Skip FK validation for now - OrderDetail must exist in DB
-            // This is a temporary workaround for testing without full OrderDetail setup
+            if (dto.OrderDetailID == Guid.Empty)
+                return null;
+
             var result = MapToEntity(dto);
             await _repository.AddAsync(result);
             await _repository.SaveChangesAsync();
